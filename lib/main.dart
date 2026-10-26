@@ -7,9 +7,7 @@ class NewCl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: const Mainpg(),
-    );
+    return const MaterialApp(home: Mainpg());
   }
 }
 
@@ -21,13 +19,12 @@ class Mainpg extends StatefulWidget {
 }
 
 class _MainpgState extends State<Mainpg> {
-  final TextEditingController _controller = TextEditingController();
+  final _controller = TextEditingController();
   final List<String> _notes = [];
   int _editIndex = -1;
 
-  void _addtext() {
+  void _save() {
     final text = _controller.text;
-    if (text.isEmpty) return;
 
     setState(() {
       if (_editIndex == -1) {
@@ -40,19 +37,15 @@ class _MainpgState extends State<Mainpg> {
     });
   }
 
-  void _deleteNote(int index) {
+  void _delete(int index) {
     setState(() {
       _notes.removeAt(index);
-      if (_editIndex == index) {
-        _editIndex = -1;
-        _controller.clear();
-      } else if (_editIndex > index) {
-        _editIndex--;
-      }
+      _editIndex = -1;
+      _controller.clear();
     });
   }
 
-  void _startEdit(int index) {
+  void _edit(int index) {
     setState(() {
       _editIndex = index;
       _controller.text = _notes[index];
@@ -72,49 +65,36 @@ class _MainpgState extends State<Mainpg> {
           children: [
             TextField(
               controller: _controller,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
                 hintText: 'Введите текст',
-                suffixIcon: _editIndex != -1
-                    ? IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          setState(() {
-                            _editIndex = -1;
-                            _controller.clear();
-                          });
-                        },
-                      )
-                    : null,
               ),
             ),
             const SizedBox(height: 10),
             ElevatedButton(
-              onPressed: _addtext,
+              onPressed: _save,
               child: Text(_editIndex == -1 ? 'Добавить' : 'Обновить'),
             ),
             const SizedBox(height: 10),
             Expanded(
               child: ListView.builder(
                 itemCount: _notes.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(_notes[index]),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.edit, color: Colors.orange),
-                          onPressed: () => _startEdit(index),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _deleteNote(index),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                itemBuilder: (context, index) => ListTile(
+                  title: Text(_notes[index]),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.orange),
+                        onPressed: () => _edit(index),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _delete(index),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],
